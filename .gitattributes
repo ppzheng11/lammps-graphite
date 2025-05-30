@@ -1,1 +1,2 @@
+*.lammpstrj filter=lfs diff=lfs merge=lfs -text
 output/data/dump.lammpstrj filter=lfs diff=lfs merge=lfs -text
