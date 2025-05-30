@@ -1,0 +1,27 @@
+read_restart    ./output/relax/relax.restart
+# 重新定义fix、变量等
+fix             2 all nvt temp 0.2 0.2 0.1
+# velocity        cnt_middle set 0.0 0.0 -1.0 units box
+# fix             move_middle cnt_middle move linear 0.0 0.0 -0.01 units box
+
+# fix             middle cnt_middle rigid single
+# velocity        cnt_middle set 0 0 -1
+
+fix             3 cnt_middle move linear 0. 0. -1
+compute         force_middle cnt_middle reduce sum fx fy fz
+
+variable        Fx equal c_force_middle[1]/2
+variable        Fy equal c_force_middle[2]/2
+variable        Fz equal c_force_middle[3]/2
+
+compute         com_middle cnt_middle com
+variable        disp equal c_com_middle[3] 
+
+thermo_style    custom v_disp v_Fx v_Fy v_Fz
+
+thermo          100
+dump            1 all custom 100 ./output/data/dump.lammpstrj id type x y z
+run             100000
+undump          1
+# 输出
+write_data      ./output/data/final.data

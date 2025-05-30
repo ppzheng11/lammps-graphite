@@ -1,0 +1,144 @@
+LAMMPS (29 Aug 2024 - Update 2)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+# 多层石墨烯三点弯曲模拟
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+shell           mkdir output ./output/minimize ./output/data ./output/relax
+
+echo		    screen
+Reading data file ...
+  orthogonal box = (0 -6 -12) to (403.44 58 24)
+  4 by 1 by 1 MPI processor grid
+WARNING: Atom style in data file atomic differs from currently defined atom style molecular (src/read_data.cpp:706)
+  reading atoms ...
+  24960 atoms
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     0 = max # of 1-2 neighbors
+     0 = max # of 1-3 neighbors
+     0 = max # of 1-4 neighbors
+     1 = max # of special neighbors
+  special bonds CPU = 0.001 seconds
+  read_data CPU = 0.038 seconds
+7872 atoms in group graphene_1
+7872 atoms in group graphene_2
+7872 atoms in group graphene_3
+448 atoms in group cnt_middle
+448 atoms in group cnt_left
+448 atoms in group cnt_right
+Reading tersoff potential file BNC.tersoff with DATE: 2013-03-21
+Reading ilp/graphene/hbn potential file BNCH.ILP with DATE: 2020-01-16
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- ilp/graphene/hbn potential doi:10.1021/acs.nanolett.8b02848
+@Article{Ouyang2018
+ author = {W. Ouyang and D. Mandelli and M. Urbakh and O. Hod},
+ title = {Nanoserpents: Graphene Nanoribbon Motion on Two-Dimensional Hexagonal Materials},
+ journal = {Nano Letters},
+ volume =  18,
+ pages =   6009,
+ year =    2018,
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 10.3
+  ghost atom cutoff = 10.3
+  binsize = 5.15, bins = 79 13 7
+  5 neighbor lists, perpetual/occasional/extra = 5 0 0
+  (1) pair tersoff, perpetual
+      attributes: full, newton on
+      pair build: full/bin
+      stencil: full/bin/3d
+      bin: standard
+  (2) pair ilp/graphene/hbn, perpetual, skip from (5)
+      attributes: full, newton on, ghost
+      pair build: skip/ghost
+      stencil: none
+      bin: none
+  (3) pair lj/cut, perpetual, skip from (4)
+      attributes: half, newton on
+      pair build: skip
+      stencil: none
+      bin: none
+  (4) neighbor class addition, perpetual, half/full from (1)
+      attributes: half, newton on
+      pair build: halffull/newton
+      stencil: none
+      bin: none
+  (5) neighbor class addition, perpetual
+      attributes: full, newton on, ghost
+      pair build: full/bin/ghost
+      stencil: full/ghost/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 34.65 | 35.23 | 35.82 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press          Volume    
+         0   0             -195960.06      0             -195960.06      16191.828      929525.76    
+     10000   0.19966792    -196701.53      0             -196700.89     -429.31462      900573.86    
+Loop time of 1203 on 4 procs for 10000 steps with 24960 atoms
+
+Performance: 0.718 ns/day, 33.417 hours/ns, 8.313 timesteps/s, 207.482 katom-step/s
+100.0% CPU use with 4 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1072.1     | 1129.1     | 1170.2     | 116.2 | 93.86
+Bond    | 0.0039696  | 0.0044819  | 0.004704   |   0.4 |  0.00
+Neigh   | 8.3625     | 8.8186     | 9.2406     |  10.5 |  0.73
+Comm    | 20.797     | 62.36      | 119.82     | 498.1 |  5.18
+Output  | 3.5615e-05 | 4.5212e-05 | 7.0042e-05 |   0.0 |  0.00
+Modify  | 2.2482     | 2.2835     | 2.3051     |   1.4 |  0.19
+Other   |            | 0.4221     |            |       |  0.04
+
+Nlocal:           6240 ave        6476 max        5988 min
+Histogram: 1 0 0 1 0 0 0 1 0 1
+Nghost:           3361 ave        3557 max        3149 min
+Histogram: 1 0 0 0 1 0 1 0 0 1
+Neighs:              0 ave           0 max           0 min
+Histogram: 4 0 0 0 0 0 0 0 0 0
+FullNghs:  1.73657e+06 ave 1.77092e+06 max 1.70121e+06 min
+Histogram: 1 0 1 0 0 0 0 1 0 1
+
+Total # of neighbors = 6946286
+Ave neighs/atom = 278.29671
+Ave special neighs/atom = 0
+Neighbor list builds = 186
+Dangerous builds = 15
+System init for write_data ...
+System init for write_restart ...
+WARNING: One or more atoms are time integrated more than once (src/modify.cpp:296)
+Per MPI rank memory allocation (min/avg/max) = 35.81 | 36.38 | 36.97 Mbytes
+    v_disp          v_Fx           v_Fy           v_Fz     
+-6.7312688     -2.8264256e-14 -1.0658792e-15  7.0723046e-14
+-5.7312688     -2.4996037e-14 -1.4570593e-15  6.5671532e-14
+-4.7312688      0.0076826987   0.13704913    -1.189569     
+-3.7312688      0.0037965243   0.16782719    -1.2123296    
+-2.7312688     -0.0057764606   0.31413509    -1.8917743    
+-1.7312688     -0.024662126    0.52127735    -2.5424313    
+-0.73126875    -0.058955103    0.77885854    -3.0857275    
+ 0.26873125    -0.11962203     1.1824845     -3.7678883    
+ 1.2687312     -0.22818641     0.75320978    -4.7024514    
+ 2.2687312     -0.40496988     0.43115613    -5.8164876    
+ 3.2687312     -0.58353975     0.33178239    -7.0540831    
+ 4.2687312     -0.48127952     0.2773617     -8.4343645    
+ 5.2687312     -0.36579489     0.25209051    -9.9313683    
+ 6.2687312     -0.23239059     0.24102528    -11.544497    
+ 7.2687312     -0.048378263    0.26589048    -13.357581    
+ 8.2687312     -0.024372966    0.25644804    -15.33057     
+ 9.2687312     -0.052377118    0.25501488    -17.390596    
+ 10.268731     -0.075069162    0.2575695     -19.54173     
+ 11.268731     -0.10163125     0.26105629    -21.791278    
+ 12.268731     -0.1528333      0.26033178    -24.108334    
+ERROR: Lost atoms: original 24960 current 24836 (src/thermo.cpp:511)
+Last command: run             100000
