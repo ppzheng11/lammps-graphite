@@ -1,0 +1,81 @@
+# 多层石墨烯三点弯曲模拟
+
+clear
+shell           mkdir output ./output/minimize ./output/data ./output/relax
+
+echo		    screen
+
+
+units           metal
+atom_style      molecular
+boundary        p p f
+dimension	    3
+timestep		0.001
+neighbor        0.3 bin
+neigh_modify    delay 0 
+
+# 读取结构
+read_data       fianl_40_3.lmp
+#fianl_40_3.lmp
+# 定义原子类型：1=碳, 2=刚性CNT, 3=刚性CNT, 4=刚性CNT
+group           graphene_1 type     1
+group           graphene_2 type     2
+group           graphene_3 type     3
+group           cnt_middle type     6
+group           cnt_left type       5
+group           cnt_right type      4
+
+# 力场设置
+pair_style      hybrid/overlay tersoff ilp/graphene/hbn 10.0 lj/cut 10.0
+# 石墨烯层间
+pair_coeff      * * tersoff           BNC.tersoff C C C C C C
+# 石墨烯之间范德华力
+pair_coeff      * * ilp/graphene/hbn  BNCH.ILP    C C C NULL NULL NULL
+# 碳纳米管和石墨烯
+pair_coeff      1 3 lj/cut            0.01 3.4
+pair_coeff      1 4 lj/cut            0.01 3.4
+pair_coeff      3 5 lj/cut            0.01 3.4
+
+
+# # 初始松弛（NPT）
+fix				right cnt_right setforce 0.0 0.0 0.0
+fix				left cnt_left setforce 0.0 0.0 0.0
+
+fix             1 all npt temp 0.2 0.2 0.1 x 0 0 1.0 y 0 0 1.0
+timestep        0.001
+run             10000
+write_data      ./output/minimize/now.data
+
+unfix           1
+
+write_restart   ./output/relax/relax.restart
+
+
+# 三点弯曲加载（NVT）
+fix             2 all nvt temp 0.2 0.2 0.1
+# velocity        cnt_middle set 0.0 0.0 -1.0 units box
+# fix             move_middle cnt_middle move linear 0.0 0.0 -0.01 units box
+
+# fix             middle cnt_middle rigid single
+# velocity        cnt_middle set 0 0 -1
+
+fix             3 cnt_middle move linear 0. 0. 1
+compute         force_middle cnt_middle reduce sum fx fy fz
+
+variable        Fx equal c_force_middle[1]/2
+variable        Fy equal c_force_middle[2]/2
+variable        Fz equal c_force_middle[3]/2
+
+compute         com_middle cnt_middle com
+variable        disp equal c_com_middle[3] 
+
+thermo_style    custom v_disp v_Fx v_Fy v_Fz
+
+thermo          1000
+dump            1 all custom 100 ./output/data/dump.lammpstrj id type x y z
+run             100000
+undump          1
+# 输出
+write_data      ./output/data/final.data
+
+# 结束
